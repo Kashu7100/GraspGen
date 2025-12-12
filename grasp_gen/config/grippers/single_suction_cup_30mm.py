@@ -9,6 +9,7 @@ import trimesh.transformations as tra
 class GripperModel(object):
     def __init__(self, data_root_dir=None, simplified=True):
         if data_root_dir is None:
+            # Path relative to grasp_gen/config/grippers/
             data_root_dir = f'{Path(__file__).parent.parent.parent}/assets/suction'
         fn_base = data_root_dir + "/suction_cup.obj"
         self.mesh = trimesh.load(fn_base).dump(concatenate=True)

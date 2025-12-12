@@ -328,8 +328,10 @@ def get_gripper_info(name: str) -> GripperInfo:
     """
     import glob
 
+    # Updated path relative to grasp_gen package
+    package_root = Path(__file__).parent
     registered_grippers = glob.glob(
-        f"{Path(__file__).parent.parent}/config/grippers/*.yaml"
+        str(package_root / "config/grippers/*.yaml")
     )
     registered_grippers = [Path(gripper).stem for gripper in registered_grippers]
     gripper_name = name
@@ -341,7 +343,7 @@ def get_gripper_info(name: str) -> GripperInfo:
 
     offset_bins, offset_bin_weights = None, None
     gripper_module = import_module_from_path(
-        f"{Path(__file__).parent.parent}/config/grippers/{gripper_name}.py"
+        str(package_root / f"config/grippers/{gripper_name}.py")
     )
     gripper_config = load_default_gripper_config(gripper_name)
 

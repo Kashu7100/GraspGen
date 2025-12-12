@@ -58,8 +58,15 @@ def load_scene(inputs):
         transform = tra.translation_matrix(inputs["robot_table"]["pos"])
         scene.add_object("robot_table", table, transform)
     if "robot" in inputs:
+        # This script likely runs from root, so we check if grasp_gen is installed or local
+        try:
+             import grasp_gen
+             asset_path = Path(grasp_gen.__file__).parent / "assets/franka/franka_panda.urdf"
+        except ImportError:
+             asset_path = Path(__file__).parent.parent / "grasp_gen/assets/franka/franka_panda.urdf"
+             
         robot = Asset(
-            f"{Path(__file__).parent.parent}/assets/franka/franka_panda.urdf",
+            str(asset_path),
             configuration=inputs["robot"]["config"],
         )
         scene.add_object("robot", robot, inputs["robot"]["pose"])

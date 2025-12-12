@@ -10,7 +10,7 @@ def download_checkpoints():
     print(f"Downloading GraspGen models from {repo_id} to {local_dir}...")
     try:
         snapshot_download(repo_id=repo_id, local_dir=local_dir, local_dir_use_symlinks=False)
-        print("Download complete!")
+        print(f"Download complete! Models are saved in {local_dir}")
     except Exception as e:
         print(f"Failed to download models: {e}")
 
