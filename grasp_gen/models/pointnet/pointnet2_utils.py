@@ -17,7 +17,7 @@ import torch.nn as nn
 from torch.autograd import Function
 
 try:
-    from pointnet2_ops import _ext as ops
+    from grasp_gen.pointnet2_ops import _ext as ops
 except ImportError:
     import glob
     import os.path as osp

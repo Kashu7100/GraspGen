@@ -6,6 +6,6 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
-import pointnet2_ops.pointnet2_modules
-import pointnet2_ops.pointnet2_utils
-from pointnet2_ops._version import __version__
+from . import pointnet2_modules
+from . import pointnet2_utils
+from ._version import __version__

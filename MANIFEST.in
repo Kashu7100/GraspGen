@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+graft grasp_gen/pointnet2_ops/_ext-src
+global-exclude *.py[cod]
+

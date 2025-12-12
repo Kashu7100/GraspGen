@@ -11,6 +11,7 @@
 #######################################################
 
 # Temporary and binary files
+build/
 *~
 *.py[cod]
 *.so

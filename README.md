@@ -1,108 +1,10 @@
-<!-- <img src="fig/cover.png" width="1000" height="250" title="readme1">  -->
+# GraspGen: A Diffusion-based Framework for 6-DOF Grasping
 
-<div align="center">
-  <img src="fig/cover.png" alt="GraspGen logo" width="800" style="margin-left:'auto' margin-right:'auto' display:'block'"/>
-  <br>
-  <br>
-  <h1>GraspGen: A Diffusion-based Framework for 6-DOF Grasping </h1>
-</div>
-<p align="center">
-  <a href="https://graspgen.github.io">
-    <img alt="Project Page" src="https://img.shields.io/badge/Project-Page-F0529C">
-  </a>
-  <a href="https://arxiv.org/abs/2507.13097">
-    <img alt="Arxiv paper link" src="https://img.shields.io/badge/arxiv-2507.13097-blue">
-  </a>
-  <a href="https://huggingface.co/adithyamurali/GraspGenModels">
-    <img alt="Model Checkpoints link" src="https://img.shields.io/badge/%F0%9F%A4%97%20HF-Models-yellow">
-  </a>
-  <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GraspGen">
-    <img alt="Datasets link" src="https://img.shields.io/badge/%F0%9F%A4%97%20HF-Datasets-yellow">
-  </a>
-  <a href="https://www.youtube.com/watch?v=gM5fgK2aZ1Y&feature=youtu.be">
-    <img alt="Video link" src="https://img.shields.io/badge/video-red">
-  </a>
-  <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GraspGen/blob/main/LICENSE_DATASET">
-    <img alt="GitHub License" src="https://img.shields.io/badge/DATASET%20License-CC%20By%204.0-red.svg">
-  </a>
-</p>
-
-
-GraspGen is a modular framework for diffusion-based 6-DOF robotic grasp generation that scales across diverse settings: 1) **embodiments** - with 3 distinct gripper types (industrial pinch gripper, suction) 2) **observability** - robustness to partial vs. complete 3D point clouds and 3) **complexity** - grasping single-object vs. clutter. We also introduce a novel and performant on-generator training recipe for the grasp discriminator, which scores and ranks the generated grasps. GraspGen outperforms prior methods in real and sim (SOTA performance on the FetchBench grasping benchmark, 17% improvement) while being performant (21X less memory) and realtime (20 Hz before TensorRT). We release the data generation, data formats as well as the training and inference infrastructure in this repo.
-
-**Key Results**
-
-
-<img src="fig/radar.png" width="200" height="250" title="readme1"> <img src="fig/3.gif" width="350" height="250" title="readme2"> <img src="fig/2.gif" width="350" height="250" title="readme3"> <img src="fig/1_fast.gif" width="300" height="250" title="readme4">
-
-## 💡 Contents
-
-1. [Release News](#release-news)
-2. [Future Features](#future-features-on-the-roadmap)
-3. [Installation](#installation)
-   - [Docker Installation](#installation-with-docker)
-   - [Pip Installation](#installation-with-pip)
-4. [Download Model Checkpoints](#download-checkpoints)
-5. [Inference Demos](#inference-demos)
-6. [Dataset](#dataset)
-7. [Training with Existing Datasets](#training-with-existing-datasets)
-8. [Bring Your Own Datasets (BYOD) - Training + Data Generation for new grippers and objects](#training--data-generation-for-new-objects-and-grippers)
-9. [GraspGen Format and Conventions](#graspgen-conventions)
-10. [FAQ](#faq)
-11. [License](#license)
-12. [Citation](#citation)
-13. [Contact](#contact)
-
-## Release News
-
-- \[10/28/2025\] Add feature of filtering out colliding grasps based on scene point cloud.
-
-- \[09/30/2025\] Isaac-Lab based grasp data generation released as [GraspDataGen](https://github.com/NVlabs/GraspDataGen) package (Note: [Data gen for suction grippers is in this repo](grasp_gen/dataset/suction.py))
-
-- \[07/16/2025\] Initial code release! Version `1.0.0`
-
-- \[03/18/2025\] Dataset release on [Hugging Face](https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GraspGen)!
-
-- \[03/18/2025\] Blog post on Model deployment at [Intrinsic.ai](https://www.intrinsic.ai/blog/posts/intrinsic-and-nvidia-deepen-platform-integrations-for-intelligent-robotics)
-
-
-## Future Features on the roadmap
-
-- ~~Data generation repo for antipodal grippers based on [Isaac Lab](https://isaac-sim.github.io/IsaacLab/main/index.html) (Note: [Data gen for suction grippers already released](grasp_gen/dataset/suction.py))~~
-- ~~Collision-filtering example~~
-- ~~Finetuning with real data**[Not planned anymore, lack of time]**~~
-- Infering grasp width based on raycasting
-- PTV3 backbone does not (yet) run on Cuda 12.8 due to a [dependency issue](https://github.com/Pointcept/PointTransformerV3/issues/159). If using Cuda 12.8, please use PointNet++ backbone for now until its resolved.
+> ⚠️ LICENSE WARNING: This project is a derivative of GraspGen and is licensed under the NVIDIA Source Code License. It is restricted to Non-Commercial Research and Evaluation purposes only. Commercial use is strictly prohibited.
 
 ## Installation
-For training, we recommend the docker installation. Pip installation has only been tested for inference.
-
-### Installation with Docker
 ```bash
-git clone https://github.com/NVlabs/GraspGen.git && cd GraspGen
-bash docker/build.sh # This will take a while
-```
-
-### Installation with pip inside Conda/Python virtualenv
-**[Optional]** If you do not already have a conda env, first create one:
-```bash
-conda create -n GraspGen python=3.10 && conda activate GraspGen
-```
-**[Optional]** If you do not already have pytorch installed:
-```bash
-pip install torch==2.1.0 torchvision==0.16.0 torch-cluster -f https://data.pyg.org/whl/torch-2.1.0+cu121.html
-```
-Install with pip:
-```bash
-# Clone repo and install
-git clone https://github.com/NVlabs/GraspGen.git
-cd GraspGen && pip install -e .
-
-# Install PointNet dependency
-cd pointnet2_ops && pip install --no-build-isolation .
-
-# Install other dependencies
-pip install pyrender && pip install PyOpenGL==3.1.5 transformers tensordict pyrender diffusers==0.11.1 timm huggingface-hub==0.25.2 scene-synthesizer[recommend]
+pip install eden_grasp_gen
 ```
 
 NOTE: When compiling `pointnet2_ops`, if you are facing issues such as finding CUDA runtime headers or missing C++ compiler, try to manually set the following before installing:
@@ -112,8 +14,8 @@ export CC=/usr/bin/g++ && export CXX=/usr/bin/g++ && export CUDAHOSTCXX=/usr/bin
 ## Download Checkpoints
 
 The checkpoints can be downloaded from [HuggingFace](https://huggingface.co/adithyamurali/GraspGenModels):
-```
-git clone https://huggingface.co/adithyamurali/GraspGenModels
+```bash
+grasp_gen download
 ```
 
 ## Inference Demos
@@ -282,8 +184,6 @@ Sorry we missed your gripper! Please consider completing this quick [survey](htt
 ### How do I report a bug or ask more detailed questions?
 Please post a github issue and we will follow up! Or feel free to email us.
 
-### Contributions?
-Contributions are welcome! Please submit a PR.
 
 ## License
 License Copyright © 2025, NVIDIA Corporation & affiliates. All rights reserved.
@@ -303,8 +203,3 @@ If you found this work to be useful, please considering citing:
   year={2025},
 }
 ```
-
-## Contact
-
-Please reach out to [Adithya Murali](http://adithyamurali.com) (admurali@nvidia.com) for further enquiries.
-

@@ -1,31 +1,55 @@
-# Copyright (c) 2025, NVIDIA CORPORATION.  All rights reserved.
-#
-# NVIDIA CORPORATION and its licensors retain all intellectual property
-# and proprietary rights in and to this software, related documentation
-# and any modifications thereto.  Any use, reproduction, disclosure or
-# distribution of this software and related documentation without an express
-# license agreement from NVIDIA CORPORATION is strictly prohibited.
-
+import os
+import os.path as osp
+import glob
 from setuptools import setup, find_packages
+from torch.utils.cpp_extension import BuildExtension, CUDAExtension
+
+# Helper to get the current directory
+this_dir = osp.dirname(osp.abspath(__file__))
+
+# PointNet2 Ops Extension Configuration
+_ext_src_root = osp.join("grasp_gen", "pointnet2_ops", "_ext-src")
+_ext_sources = glob.glob(osp.join(_ext_src_root, "src", "*.cpp")) + glob.glob(
+    osp.join(_ext_src_root, "src", "*.cu")
+)
+
+# Only build extension if CUDA is available or if we force it?
+# Usually CUDAExtension handles the check or fails.
+# Since this library heavily relies on it, we assume it's needed.
+
+ext_modules = [
+    CUDAExtension(
+        name="grasp_gen.pointnet2_ops._ext",
+        sources=_ext_sources,
+        extra_compile_args={
+            "cxx": ["-O3"],
+            "nvcc": ["-O3", "-Xfatbin", "-compress-all"],
+        },
+        include_dirs=[osp.join(this_dir, _ext_src_root, "include")],
+    )
+]
+
+install_requires = []
 
 setup(
-    name="grasp_gen",
-    version="1.0.0",
+    name="eden_grasp_gen",
+    version="0.1.0",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[
-        line for line in open('requirements.txt').readlines()
-        if "@" not in line
-    ],
-    description="GraspGen",
-    author="",
-    author_email="",
-    license="",
-    url="",
+    install_requires=install_requires,
+    ext_modules=ext_modules,
+    cmdclass={"build_ext": BuildExtension},
+    description="A fork of GraspGen for EDEN project",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    author="Kashu Yamazaki",
+    author_email="kyamazak@andrew.cmu.edu",
+    license="NVIDIA License",
+    url="https://github.com/NVlabs/GraspGen",
     keywords="robotics manipulation learning computer-vision",
     classifiers=[
-        "Programming Language :: Python",
-        "Natural Language :: English",
+        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
     ],
+    python_requires=">=3.8",
 )

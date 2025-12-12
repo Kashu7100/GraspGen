@@ -134,7 +134,7 @@ class Point(Dict):
         )
 
         if shuffle_orders:
-            perm = torch.randperm(code.shape[0])
+            perm = torch.randperm(code.shape[0], device=code.device)
             code = code[perm]
             order = order[perm]
             inverse = inverse[perm]
@@ -682,7 +682,7 @@ class SerializedPooling(PointModule):
         )
 
         if self.shuffle_orders:
-            perm = torch.randperm(code.shape[0])
+            perm = torch.randperm(code.shape[0], device=code.device)
             code = code[perm]
             order = order[perm]
             inverse = inverse[perm]
