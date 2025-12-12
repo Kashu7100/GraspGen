@@ -34,7 +34,7 @@ install_requires = []
 
 setup(
     name="eden_grasp_gen",
-    version="0.1.4",
+    version="0.1.5",
     packages=find_packages(),
     package_data={
         "grasp_gen": ["config/grippers/*.yaml", "config/grippers/*.py", "assets/**/*"],

@@ -11,6 +11,8 @@
 #######################################################
 
 # Temporary and binary files
+gg_models/
+models/
 build/
 *~
 *.py[cod]
