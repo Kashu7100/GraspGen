@@ -33,7 +33,7 @@ install_requires = []
 
 setup(
     name="eden_grasp_gen",
-    version="0.1.0",
+    version="0.1.1a",
     packages=find_packages(),
     include_package_data=True,
     install_requires=install_requires,
@@ -51,5 +51,5 @@ setup(
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.10",
 )

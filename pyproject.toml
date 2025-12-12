@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eden_grasp_gen"
-version = "0.1.0"
+version = "0.1.1a"
 description = "A fork of GraspGen for EDEN project"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -42,8 +42,9 @@ dependencies = [
     "yourdfpy==0.0.56",
 ]
 
-[tool.setuptools]
-packages = ["grasp_gen"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["grasp_gen*"]
 
 [project.scripts]
 grasp_gen = "grasp_gen._main:main"
