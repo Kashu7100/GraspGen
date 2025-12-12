@@ -274,7 +274,7 @@ def load_default_gripper_config(gripper_name: str) -> Dict:
         Dict: Dictionary containing the gripper's default configuration.
     """
     conf_path = (
-        Path(__file__).parent.parent / "config" / "grippers" / f"{gripper_name}.yaml"
+        Path(__file__).parent / "config" / "grippers" / f"{gripper_name}.yaml"
     )
     config = load_gripper_yaml_file(conf_path)
     return config
