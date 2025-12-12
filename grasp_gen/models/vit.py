@@ -33,9 +33,8 @@ Hacked together by / Copyright 2020, Ross Wightman
 """
 import logging
 import math
-from collections import OrderedDict
 from functools import partial
-from typing import Callable, List, Optional, Sequence, Tuple, Union
+from typing import Callable, Optional, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -47,8 +46,6 @@ from timm.layers import (
     Mlp,
     PatchDropout,
     PatchEmbed,
-    RmsNorm,
-    SwiGLUPacked,
     lecun_normal_,
     resample_abs_pos_embed,
     resample_patch_embed,
@@ -58,9 +55,8 @@ from timm.layers import (
 from timm.models._manipulate import adapt_input_conv, checkpoint_seq, named_apply
 from torch.jit import Final
 
-_logger = logging.getLogger(__name__)
 
-from timm.layers.weight_init import trunc_normal_tf_
+_logger = logging.getLogger(__name__)
 
 
 class SinusoidalPosEmb(nn.Module):
