@@ -13,19 +13,14 @@
 Utility functions for data preprocessing.
 """
 import glob
-import io
 import json
-import logging
 import os
 import time
 from typing import Dict, Tuple
 
 import h5py
-import imageio
 import numpy as np
-import scipy
 import torch
-import torch.nn.functional as F
 import trimesh
 import trimesh.transformations as tra
 from tqdm import tqdm
@@ -35,29 +30,18 @@ from grasp_gen.utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Union
+from typing import List, Union
 
 from grasp_gen.dataset.eval_utils import (
-    is_empty,
     load_h5_handle_empty_case,
     write_info,
-    write_to_h5,
 )
 from grasp_gen.dataset.exceptions import DataLoaderError
 from grasp_gen.dataset.webdataset_utils import GraspWebDatasetReader
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
-    get_normals_from_mesh,
     visualize_grasp,
-    visualize_mesh,
-    visualize_pointcloud,
 )
-from grasp_gen.robot import GripperInfo
-
-try:
-    import cv2
-except:
-    pass
 
 
 class GraspJsonDatasetReader:
@@ -901,7 +885,7 @@ def load_object_grasp_datapoint_objaverse(
                 logger.error(f"Object mesh not found, at {object_file}")
                 return DataLoaderError.OBJECT_MESH_NOT_FOUND, None
 
-        except Exception as e:
+        except Exception:
             return DataLoaderError.UUID_MAPPING_LOAD_ERROR, None
 
     object_scale = grasps_dict["object"]["scale"]

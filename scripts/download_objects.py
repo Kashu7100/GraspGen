@@ -37,7 +37,6 @@ except ImportError:
     )
     exit(1)
 
-from pathlib import Path
 
 MANIFOLD_PATH = "manifold"
 SIMPLIFY_PATH = "simplify"

@@ -6,9 +6,7 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
-import os
-import sys
-from typing import Tuple, Dict
+from typing import Tuple
 
 import numpy as np
 import torch

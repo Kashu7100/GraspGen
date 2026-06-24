@@ -2,11 +2,9 @@ import pytest
 import torch
 import numpy as np
 import trimesh
-from pathlib import Path
 from grasp_gen.robot import (
     GripperInfo,
     get_canonical_gripper_control_points,
-    generate_circle_points,
     load_visualize_control_points_multi_suction,
     parse_offset_transform_from_yaml,
     load_gripper_yaml_file,

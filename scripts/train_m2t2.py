@@ -15,18 +15,16 @@ Training script for M2T2.
 import os
 import signal
 import sys
-import threading
 from datetime import timedelta
 from functools import partial
 from itertools import chain
-from time import sleep, time
+from time import time
 
 import hydra
 import numpy as np
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
-from matplotlib import pyplot as plt
 from omegaconf import DictConfig, OmegaConf
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.nn.utils import clip_grad_norm_
@@ -40,7 +38,6 @@ from grasp_gen.utils.train_utils import (
     compute_iou,
     get_data_loader,
     save_model,
-    to_cpu,
     to_gpu,
     write_scalar_ddp,
 )

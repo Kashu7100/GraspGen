@@ -1,6 +1,4 @@
-import pytest
 import torch
-import numpy as np
 from grasp_gen.utils.point_cloud_utils import knn_points, point_cloud_outlier_removal
 
 

@@ -10,9 +10,6 @@
 # Standard Library
 import io
 import math
-import os
-import sys
-import scipy
 import imageio
 from PIL import Image
 from torchvision import transforms
@@ -20,19 +17,19 @@ from functools import lru_cache
 from typing import Dict, List, Tuple, Union
 
 # Third Party
-try:
-    import cv2
-except ImportError:
-    logger.warning("Unable to import cv2")
 import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image, ImageDraw
-from torchvision import transforms
+from PIL import ImageDraw
 
 from grasp_gen.utils.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+try:
+    import cv2
+except ImportError:
+    logger.warning("Unable to import cv2")
 
 
 def gen_lut() -> np.ndarray:

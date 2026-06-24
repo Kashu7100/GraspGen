@@ -7,7 +7,6 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 import os
-import sys
 
 import time
 import numpy as np
@@ -18,8 +17,7 @@ from pathlib import Path
 from grasp_gen.dataset.dataset import collate
 from grasp_gen.models.grasp_gen import GraspGen
 from grasp_gen.models.m2t2 import M2T2
-from grasp_gen.utils.point_cloud_utils import knn_points, point_cloud_outlier_removal
-from grasp_gen.robot import load_control_points_for_visualization
+from grasp_gen.utils.point_cloud_utils import point_cloud_outlier_removal
 from grasp_gen.utils.logging_config import get_logger
 
 logger = get_logger(__name__)

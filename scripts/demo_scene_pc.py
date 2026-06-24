@@ -13,19 +13,14 @@ import os
 import time
 
 import numpy as np
-import omegaconf
 import torch
 import trimesh.transformations as tra
-from tqdm import tqdm
 
 from grasp_gen.grasp_server import GraspGenSampler, load_grasp_cfg
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
     get_color_from_score,
-    get_normals_from_mesh,
-    make_frame,
     visualize_grasp,
-    visualize_mesh,
     visualize_pointcloud,
 )
 from grasp_gen.utils.point_cloud_utils import (

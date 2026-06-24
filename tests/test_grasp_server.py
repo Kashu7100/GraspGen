@@ -3,7 +3,6 @@ import torch
 import numpy as np
 import os
 from grasp_gen.grasp_server import GraspGenSampler, load_grasp_cfg
-from grasp_gen.utils.point_cloud_utils import point_cloud_outlier_removal
 
 
 @pytest.fixture

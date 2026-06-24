@@ -9,22 +9,17 @@
 import argparse
 import os
 import numpy as np
-import torch
 import trimesh
 import trimesh.transformations as tra
-from pathlib import Path
 
 from grasp_gen.grasp_server import GraspGenSampler, load_grasp_cfg
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
     get_color_from_score,
-    get_normals_from_mesh,
-    make_frame,
     visualize_grasp,
     visualize_mesh,
     visualize_pointcloud,
 )
-from grasp_gen.utils.point_cloud_utils import point_cloud_outlier_removal
 from grasp_gen.dataset.dataset_utils import sample_points
 from grasp_gen.dataset.eval_utils import save_to_isaac_grasp_format
 

@@ -18,15 +18,10 @@ import logging
 import os
 import random
 import time
-from typing import Tuple, Union
+from copy import deepcopy
+from typing import Union
 
-import h5py
 import numpy as np
-
-try:
-    import pickle5 as pickle
-except:
-    import pickle
 import torch
 import trimesh
 import trimesh.transformations as tra
@@ -37,7 +32,6 @@ from tqdm import tqdm
 
 from grasp_gen.dataset.dataset_utils import (
     GraspGenDatasetCache,
-    ObjectGraspDataset,
     dump_object_list,
     filter_grasps_by_point_cloud_visibility,
     load_from_json,
@@ -49,17 +43,11 @@ from grasp_gen.dataset.eval_utils import check_collision
 from grasp_gen.dataset.exceptions import DataLoaderError
 from grasp_gen.dataset.renderer import render_pc
 from grasp_gen.dataset.visualize_utils import (
-    MAPPING_ID2NAME,
     MAPPING_NAME2ID,
     visualize_discriminator_dataset,
     visualize_generator_dataset,
 )
 from grasp_gen.dataset.webdataset_utils import GraspWebDatasetReader, is_webdataset
-from grasp_gen.utils.meshcat_utils import (
-    create_visualizer,
-    visualize_pointcloud,
-    visualize_grasp,
-)
 from grasp_gen.robot import get_gripper_info
 from grasp_gen.utils.logging_config import get_logger
 
@@ -537,10 +525,6 @@ class PickDataset(Dataset):
                 import h5py
                 from tqdm import tqdm
 
-                from grasp_gen.dataset.dataset_utils import (
-                    get_json_file_given_object_id,
-                )
-
                 possible_grasp_keys = [
                     "grasps.json",
                     "*suction_grasps.json",
@@ -575,7 +559,7 @@ class PickDataset(Dataset):
                     map_object_id_to_uuid[h5_object_id] = uuid
 
                 map_basenameuuid_to_json_file = {}
-                logger.info(f"Onpolicy dataset: Parsing json file to UUID mappings")
+                logger.info("Onpolicy dataset: Parsing json file to UUID mappings")
                 for json_file_path in tqdm(json_files):
                     json_path_object_id = load_from_json(json_file_path)["object"][
                         "file"
@@ -831,7 +815,7 @@ class ObjectPickDataset(PickDataset):
 
             if key in self.cache:
                 (object_grasp_data, outputs_red) = self.cache[key]
-                outputs = copy(random.choice(outputs_red))
+                outputs = deepcopy(random.choice(outputs_red))
                 mesh_mode = outputs["mesh_mode"]
                 load_contact_batch = outputs["load_contact_batch"]
                 mask = torch.randint(0, outputs["points"].shape[0], (self.num_points,))
@@ -849,8 +833,6 @@ class ObjectPickDataset(PickDataset):
     def __getitem__(self, idx):
         key = self.scenes[idx]
         if self.preload_dataset:
-            from copy import deepcopy as copy
-
             if key not in self.cache:
                 # print(f"Key {key} not in cache")
                 denylist = load_from_json(self.denylist_path)
@@ -863,7 +845,7 @@ class ObjectPickDataset(PickDataset):
 
             (object_grasp_data, outputs_red) = self.cache[key]
 
-            outputs = copy(random.choice(outputs_red))
+            outputs = deepcopy(random.choice(outputs_red))
             mesh_mode = outputs["mesh_mode"]
             load_contact_batch = outputs["load_contact_batch"]
             mask = torch.randint(0, outputs["points"].shape[0], (self.num_points,))
@@ -1129,7 +1111,7 @@ class ObjectPickDataset(PickDataset):
                             positive_grasps_onpolicy = np.array(
                                 [T_aug @ g for g in positive_grasps_onpolicy]
                             )
-                except Exception as e:
+                except Exception:
                     # print(f"Error loading positive grasps onpolicy: {e}")
                     positive_grasps_onpolicy = None
 
@@ -1147,7 +1129,7 @@ class ObjectPickDataset(PickDataset):
                             negative_grasps_onpolicy = np.array(
                                 [T_aug @ g for g in negative_grasps_onpolicy]
                             )
-                except Exception as e:
+                except Exception:
                     # print(f"Error loading negative grasps onpolicy: {e}")
                     negative_grasps_onpolicy = None
 

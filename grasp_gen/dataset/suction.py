@@ -16,7 +16,6 @@ from grasp_gen.utils.meshcat_utils import (
     visualize_pointcloud,
     visualize_mesh,
     visualize_grasp,
-    get_color_from_score,
 )
 
 

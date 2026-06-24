@@ -15,7 +15,6 @@ Training script for GraspGen model.
 import os
 import signal
 import sys
-import threading
 from datetime import timedelta
 from functools import partial
 from itertools import chain
@@ -25,25 +24,20 @@ import numpy as np
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
-from matplotlib import pyplot as plt
 from omegaconf import DictConfig, OmegaConf
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.nn.utils import clip_grad_norm_
 from torch.utils.tensorboard.writer import SummaryWriter
 from grasp_gen.dataset.dataset import (
     get_cache_path,
-    get_cache_prefix,
-    get_pc_setting_name,
     is_valid_cache_dir,
 )
 from grasp_gen.models.grasp_gen import GraspGenDiscriminator, GraspGenGenerator
 from grasp_gen.utils.train_utils import (
     add_to_dict,
     build_optimizer,
-    compute_iou,
     get_data_loader,
     save_model,
-    to_cpu,
     to_gpu,
     write_scalar_ddp,
 )

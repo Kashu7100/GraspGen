@@ -223,7 +223,7 @@ def rotation_matrix_from_vectors(
     angle = torch.atan2(sin_theta, cos_theta)
 
     # Convert the axis-angle to a rotation matrix
-    rotation_matrix = axis_angle_to_matrix(axis * angle)
+    rotation_matrix = rotation_conversions.axis_angle_to_matrix(axis * angle)
 
     return rotation_matrix
 

@@ -1,9 +1,6 @@
-import pytest
 import torch
-import numpy as np
 from grasp_gen.utils.math_utils import (
     rotation_6d_to_matrix,
-    matrix_to_rotation_6d,
     compute_pose_distance_batch,
     compute_pose_emd,
 )

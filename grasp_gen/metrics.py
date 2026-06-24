@@ -9,6 +9,9 @@
 
 from __future__ import annotations
 
+# Standard Library
+from typing import Dict
+
 # Third Party
 import numpy as np
 import torch

@@ -11,7 +11,6 @@
 Utility functions for training models.
 """
 import copy
-import os
 import sys
 
 import numpy as np
@@ -20,7 +19,7 @@ from omegaconf.listconfig import ListConfig
 from torch.utils.data import ConcatDataset, DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 
-from grasp_gen.dataset.dataset import ObjectPickDataset, collate
+from grasp_gen.dataset.dataset import collate
 from grasp_gen.utils.logging_config import get_logger
 
 logger = get_logger(__name__)
