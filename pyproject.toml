@@ -21,7 +21,7 @@ dependencies = [
     "hydra-core",
     "matplotlib",
     "meshcat",
-    "numpy==1.26.4",
+    "numpy>=1.26,<2.3",
     "webdataset",
     "scikit-learn",
     "scipy",
