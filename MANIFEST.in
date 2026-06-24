@@ -3,5 +3,11 @@ include LICENSE
 graft grasp_gen/assets
 graft grasp_gen/config
 graft grasp_gen/pointnet2_ops/_ext-src
+prune fig
+prune runs
+prune docs
+prune docker
+prune tutorials
+exclude .gitattributes .gitignore .gitmodules .pre-commit-config.yaml
 global-exclude *.py[cod]
 
