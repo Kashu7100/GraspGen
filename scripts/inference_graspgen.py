@@ -11,8 +11,6 @@
 Inference script for GraspGen.
 """
 import os
-from functools import partial
-from pathlib import Path
 from time import time
 
 import h5py
@@ -23,27 +21,20 @@ import torch.multiprocessing as mp
 import trimesh.transformations as tra
 from inference_m2t2 import load_scene, record_worker
 from omegaconf import DictConfig
-from scene_synthesizer.assets import Asset, BoxAsset, TrimeshAsset
-from torch_cluster import fps
+from scene_synthesizer.assets import Asset
 
 from grasp_gen.dataset.eval_utils import (
     check_collision,
     get_logger,
-    get_timestamp,
     log_worker,
     write_info,
-    write_to_h5,
 )
 from grasp_gen.utils.meshcat_utils import (
-    create_visualizer,
     get_color_from_score,
     visualize_grasp,
-    visualize_mesh,
-    visualize_pointcloud,
 )
 from grasp_gen.robot import get_gripper_info
 from grasp_gen.utils.train_utils import get_data_loader, to_cpu, to_gpu
-from grasp_gen.dataset.webdataset_utils import GraspWebDatasetReader, is_webdataset
 
 
 def record_grasps_diffusion(log, cfg, gripper, inputs, output_file=None):
@@ -129,7 +120,6 @@ def record_grasps_diffusion(log, cfg, gripper, inputs, output_file=None):
     all_col = np.zeros((num_grasps,)).astype("bool")
     all_col[grasp_mask] = collision
     assert len(poses) == 1
-    import trimesh.transformations as tra
 
     T_move_back_to_obj_frame = tra.inverse_matrix(poses[0])
     T_move_from_obj_frame_to_origin = tra.inverse_matrix(T_move_back_to_obj_frame)
@@ -546,7 +536,7 @@ def main(cfg: DictConfig) -> None:
         h5_handle = output_file.create_group("objects")
 
         # Evaluate all grasps
-        log.info(f"Evaluating all grasps without thresholding")
+        log.info("Evaluating all grasps without thresholding")
         cfg.eval.object_thresh = -1.0
         cfg.eval.mask_thresh = -1.0
 

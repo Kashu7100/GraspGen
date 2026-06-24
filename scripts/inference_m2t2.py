@@ -12,7 +12,6 @@
 Inference script for M2T2.
 """
 import os
-from functools import partial
 from pathlib import Path
 from time import time
 
@@ -22,19 +21,16 @@ import numpy as np
 import torch
 import torch.multiprocessing as mp
 import trimesh.transformations as tra
-from h5py._hl.files import File
 from omegaconf import DictConfig
-from scene_synthesizer.assets import Asset, BoxAsset, TrimeshAsset
+from scene_synthesizer.assets import Asset, BoxAsset
 from scene_synthesizer.scene import Scene
 from torch_cluster import fps
 
 from grasp_gen.dataset.eval_utils import (
     check_collision,
     get_logger,
-    get_timestamp,
     log_worker,
     write_info,
-    write_to_h5,
 )
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
@@ -60,11 +56,17 @@ def load_scene(inputs):
     if "robot" in inputs:
         # This script likely runs from root, so we check if grasp_gen is installed or local
         try:
-             import grasp_gen
-             asset_path = Path(grasp_gen.__file__).parent / "assets/franka/franka_panda.urdf"
+            import grasp_gen
+
+            asset_path = (
+                Path(grasp_gen.__file__).parent / "assets/franka/franka_panda.urdf"
+            )
         except ImportError:
-             asset_path = Path(__file__).parent.parent / "grasp_gen/assets/franka/franka_panda.urdf"
-             
+            asset_path = (
+                Path(__file__).parent.parent
+                / "grasp_gen/assets/franka/franka_panda.urdf"
+            )
+
         robot = Asset(
             str(asset_path),
             configuration=inputs["robot"]["config"],
@@ -451,7 +453,7 @@ def main(cfg: DictConfig) -> None:
         h5_handle = output_file.create_group("objects")
 
         # Evaluate all grasps
-        log.info(f"Evaluating all grasps without thresholding")
+        log.info("Evaluating all grasps without thresholding")
         cfg.eval.object_thresh = -1.0
         cfg.eval.mask_thresh = -1.0
 

@@ -7,10 +7,7 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 import math
-import os
-import sys
-import time
-from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pyrender
@@ -24,7 +21,6 @@ from grasp_gen.dataset.exceptions import DataLoaderError
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
     make_frame,
-    visualize_grasp,
     visualize_mesh,
     visualize_pointcloud,
 )

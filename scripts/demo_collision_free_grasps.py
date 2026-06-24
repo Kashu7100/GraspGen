@@ -9,27 +9,20 @@
 import argparse
 import os
 import time
-from typing import Tuple, Dict, List
 
 import numpy as np
 import torch
-import trimesh
 import trimesh.transformations as tra
-from IPython import embed
-from tqdm import tqdm
 
 from grasp_gen.grasp_server import GraspGenSampler, load_grasp_cfg
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
     get_color_from_score,
-    make_frame,
     visualize_grasp,
-    visualize_mesh,
     visualize_pointcloud,
 )
 from grasp_gen.utils.point_cloud_utils import (
     point_cloud_outlier_removal,
-    knn_points,
     depth_and_segmentation_to_point_clouds,
     filter_colliding_grasps,
 )
@@ -414,6 +407,6 @@ if __name__ == "__main__":
                 "Visualization ready. Green point cloud is the target object, gray is the scene."
             )
         print(
-            f"Collision-free grasps are shown in their quality colors, colliding grasps (up to 20) are shown in red."
+            "Collision-free grasps are shown in their quality colors, colliding grasps (up to 20) are shown in red."
         )
         input("Press Enter to exit...")

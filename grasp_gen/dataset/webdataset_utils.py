@@ -1,9 +1,7 @@
 import glob
 import json
 import os
-import time
-from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 import webdataset as wds
 from tqdm import tqdm

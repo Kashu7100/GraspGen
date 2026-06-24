@@ -10,14 +10,13 @@
 """
 Utility functions for visualization using meshcat.
 """
-from typing import Dict, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import meshcat
 import meshcat.geometry as g
 import meshcat.transformations as mtf
 import numpy as np
 import trimesh
-import trimesh.transformations as tra
 
 from grasp_gen.robot import load_control_points_for_visualization
 from grasp_gen.utils.logging_config import get_logger

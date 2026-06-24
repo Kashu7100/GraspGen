@@ -195,11 +195,11 @@ def test_dataset_format_convention():
                 grasp[3, :], [0, 0, 0, 1]
             ), f"Invalid transformation matrix for {obj_id}"
 
-    print(f"✅ Dataset format validation passed!")
+    print("✅ Dataset format validation passed!")
     print(
         f"   - Object dataset: {len(train_objects)} train objects, {len(valid_objects)} valid objects"
     )
     print(
         f"   - Grasp dataset: {'WebDataset' if is_webdataset(grasp_data_path) else 'JSON'} format"
     )
-    print(f"   - All files follow GraspGen convention")
+    print("   - All files follow GraspGen convention")

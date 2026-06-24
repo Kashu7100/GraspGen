@@ -1,12 +1,10 @@
 import logging
 import sys
 from logging.handlers import QueueHandler
-from pathlib import Path
-from typing import List, Tuple
+from typing import Tuple
 
 import h5py
 import numpy as np
-import trimesh
 import trimesh.transformations as tra
 import yaml
 from h5py._hl.group import Group

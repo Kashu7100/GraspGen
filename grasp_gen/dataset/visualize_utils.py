@@ -1,10 +1,10 @@
 import numpy as np
 import torch
 import trimesh
+import trimesh.transformations as tra
 
 from grasp_gen.utils.meshcat_utils import (
     create_visualizer,
-    make_frame,
     visualize_grasp,
     visualize_mesh,
     visualize_pointcloud,
@@ -57,9 +57,7 @@ def visualize_generator_dataset(
             )
 
     if pointcloud is not None:
-        visualize_pointcloud(
-            vis, f"point_cloud", pointcloud, [10, 10, 250], size=0.0025
-        )
+        visualize_pointcloud(vis, "point_cloud", pointcloud, [10, 10, 250], size=0.0025)
 
     if load_contact:
 
@@ -69,7 +67,7 @@ def visualize_generator_dataset(
         else:
             contacts = tra.transform_points(contacts, obj_pose)
 
-        visualize_pointcloud(vis, f"contact_points", contacts, [0, 0, 255], size=0.007)
+        visualize_pointcloud(vis, "contact_points", contacts, [0, 0, 255], size=0.007)
     input()
 
 
@@ -204,8 +202,6 @@ def visualize_discriminator_dataset(
     if pointcloud is not None:
         if type(pointcloud) == torch.Tensor:
             pointcloud = pointcloud.cpu().numpy()
-        visualize_pointcloud(
-            vis, f"point_cloud", pointcloud, [10, 10, 250], size=0.0025
-        )
+        visualize_pointcloud(vis, "point_cloud", pointcloud, [10, 10, 250], size=0.0025)
 
     input()
