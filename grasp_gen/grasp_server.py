@@ -15,9 +15,8 @@ import omegaconf
 import torch
 from pathlib import Path
 
-from grasp_gen.dataset.dataset import collate
+from grasp_gen.dataset.collate import collate
 from grasp_gen.models.grasp_gen import GraspGen
-from grasp_gen.models.m2t2 import M2T2
 from grasp_gen.utils.point_cloud_utils import knn_points, point_cloud_outlier_removal
 from grasp_gen.robot import load_control_points_for_visualization
 from grasp_gen.utils.logging_config import get_logger
@@ -61,6 +60,8 @@ class GraspGenSampler:
         self.cfg = cfg
         # Initialize model and load checkpoint
         if cfg.eval.model_name == "m2t2":
+            from grasp_gen.models.m2t2 import M2T2  # its PointNet++ backbone builds CUDA ops
+
             model = M2T2.from_config(cfg.m2t2)
             ckpt = torch.load(cfg.eval.checkpoint)
             model.load_state_dict(ckpt["model"])

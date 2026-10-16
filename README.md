@@ -4,10 +4,26 @@
 
 ## Installation
 ```bash
-pip install eden_grasp_gen
+pip install eden_grasp_gen            # inference; or `pip install "eden[graspgen]"` with Eden
+pip install "eden_grasp_gen[train]"   # plus training, data generation and the M2T2 scene model
 ```
 
-NOTE: When compiling `pointnet2_ops`, if you are facing issues such as finding CUDA runtime headers or missing C++ compiler, try to manually set the following before installing:
+Since 0.1.7 this is a pure-Python wheel with floor-only pins, so it installs next to current torch,
+numpy and huggingface-hub (Eden's stack included):
+
+- The released models run on a pure-PyTorch Point Transformer V3
+  (`grasp_gen/models/ptv3/ptv3_vanilla.py`, from GraspGenX): spconv, torch-scatter and a CUDA
+  build are no longer needed. It loads the released spconv-trained checkpoints as they are and
+  reproduces spconv's handling of points that share a voxel. spconv's own output varies run to
+  run there (which point represents a voxel is a GPU race). On the `graspgen_franka_panda` model
+  and four YCB objects, judged in simulation over three seeds, it matched the spconv model: 63/87
+  collision-free top-10 grasps and 7/12 pinches, against spconv's 49/88 and 6/12.
+  `tests/test_ptv3_vanilla.py` checks it against spconv where spconv is installed.
+- diffusers is no longer a dependency: its `DDPMScheduler` is vendored
+  (`grasp_gen/models/ddpm_scheduler.py`, checked against diffusers step for step in
+  `tests/test_ddpm_scheduler.py`), because every diffusers release caps huggingface-hub below 2.
+- The PointNet++ ops (M2T2, `obs_backbone="pointnet"`) compile on first use instead of at install.
+  If that fails to find CUDA runtime headers or a C++ compiler, set:
 ```bash
 export CC=/usr/bin/g++ && export CXX=/usr/bin/g++ && export CUDAHOSTCXX=/usr/bin/g++ && export TORCH_CUDA_ARCH_LIST="8.6"
 ```

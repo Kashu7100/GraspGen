@@ -16,30 +16,43 @@ import torch
 import torch.nn as nn
 from torch.autograd import Function
 
-try:
-    from grasp_gen.pointnet2_ops import _ext as ops
-except ImportError:
-    import glob
-    import os.path as osp
+_OPS = None
 
-    from torch.utils.cpp_extension import load
 
-    warnings.warn("Unable to load pointnet2_ops cpp extension. JIT Compiling.")
+def _ops():
+    """The PointNet++ CUDA ops, loaded on first use.
 
-    _ext_src_root = osp.join(osp.dirname(__file__), "_ext-src")
-    _ext_sources = glob.glob(osp.join(_ext_src_root, "src", "*.cpp")) + glob.glob(
-        osp.join(_ext_src_root, "src", "*.cu")
-    )
+    Only the PointNet++ backbones need them (M2T2, ``obs_backbone="pointnet"``); the released
+    GraspGen models use PTv3, so importing this module, or running them, builds nothing. The
+    ops come from a prebuilt ``grasp_gen.pointnet2_ops._ext`` when there is one, and are
+    otherwise compiled from ``grasp_gen/pointnet2_ops/_ext-src`` with a CUDA toolkit that
+    matches torch's.
+    """
+    global _OPS
+    if _OPS is None:
+        try:
+            from grasp_gen.pointnet2_ops import _ext as ops
+        except ImportError:
+            import glob
+            import os.path as osp
 
-    # os.environ["TORCH_CUDA_ARCH_LIST"] = "3.7+PTX;5.0;6.0;6.1;6.2;7.0;7.5"
-    ops = load(
-        "_ext",
-        sources=_ext_sources,
-        extra_include_paths=[osp.join(_ext_src_root, "include")],
-        extra_cflags=["-O3"],
-        extra_cuda_cflags=["-O3", "-Xfatbin", "-compress-all"],
-        with_cuda=True,
-    )
+            from torch.utils.cpp_extension import load
+
+            warnings.warn("pointnet2_ops is not prebuilt; JIT compiling it.")
+            src_root = osp.join(osp.dirname(osp.dirname(osp.dirname(__file__))), "pointnet2_ops", "_ext-src")
+            sources = glob.glob(osp.join(src_root, "src", "*.cpp")) + glob.glob(osp.join(src_root, "src", "*.cu"))
+            if not sources:
+                raise ImportError(f"pointnet2_ops sources are missing under {src_root}")
+            ops = load(
+                "_ext",
+                sources=sources,
+                extra_include_paths=[osp.join(src_root, "include")],
+                extra_cflags=["-O3"],
+                extra_cuda_cflags=["-O3", "-Xfatbin", "-compress-all"],
+                with_cuda=True,
+            )
+        _OPS = ops
+    return _OPS
 
 
 class FurthestPointSampling(Function):
@@ -62,7 +75,7 @@ class FurthestPointSampling(Function):
         torch.Tensor
             (B, npoint) tensor containing the set
         """
-        out = ops.furthest_point_sampling(xyz, npoint)
+        out = _ops().furthest_point_sampling(xyz, npoint)
         ctx.mark_non_differentiable(out)
 
         return out
@@ -95,7 +108,7 @@ class GatherOperation(Function):
             (B, C, npoint) tensor
         """
         ctx.save_for_backward(idx, features)
-        output = ops.gather_points(features, idx)
+        output = _ops().gather_points(features, idx)
         return output
 
     @staticmethod
@@ -103,7 +116,7 @@ class GatherOperation(Function):
         idx, features = ctx.saved_tensors
         N = features.size(2)
 
-        grad_features = ops.gather_points_grad(grad_out.contiguous(), idx, N)
+        grad_features = _ops().gather_points_grad(grad_out.contiguous(), idx, N)
         return grad_features, None
 
 
@@ -130,7 +143,7 @@ class ThreeNN(Function):
         idx : torch.Tensor
             (B, n, 3) index of 3 nearest neighbors
         """
-        dist2, idx = ops.three_nn(unknown, known)
+        dist2, idx = _ops().three_nn(unknown, known)
         dist = torch.sqrt(dist2)
 
         ctx.mark_non_differentiable(dist, idx)
@@ -167,7 +180,7 @@ class ThreeInterpolate(Function):
         """
         ctx.save_for_backward(idx, weight, features)
 
-        return ops.three_interpolate(features, idx, weight)
+        return _ops().three_interpolate(features, idx, weight)
 
     @staticmethod
     def backward(ctx, grad_out):
@@ -190,7 +203,7 @@ class ThreeInterpolate(Function):
         idx, weight, features = ctx.saved_tensors
         m = features.size(2)
 
-        grad_features = ops.three_interpolate_grad(
+        grad_features = _ops().three_interpolate_grad(
             grad_out.contiguous(), idx, weight, m
         )
 
@@ -220,7 +233,7 @@ class GroupingOperation(Function):
         """
         ctx.save_for_backward(idx, features)
 
-        return ops.group_points(features, idx)
+        return _ops().group_points(features, idx)
 
     @staticmethod
     def backward(ctx, grad_out):
@@ -241,7 +254,7 @@ class GroupingOperation(Function):
         idx, features = ctx.saved_tensors
         N = features.size(2)
 
-        grad_features = ops.group_points_grad(grad_out.contiguous(), idx, N)
+        grad_features = _ops().group_points_grad(grad_out.contiguous(), idx, N)
 
         return grad_features, torch.zeros_like(idx)
 
@@ -271,7 +284,7 @@ class BallQuery(Function):
         torch.Tensor
             (B, npoint, nsample) tensor with the indicies of the features that form the query balls
         """
-        output = ops.ball_query(new_xyz, xyz, radius, nsample)
+        output = _ops().ball_query(new_xyz, xyz, radius, nsample)
 
         ctx.mark_non_differentiable(output)
 

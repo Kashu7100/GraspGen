@@ -15,7 +15,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from grasp_gen.dataset.dataset import MAPPING_ID2NAME
 from grasp_gen.utils.math_utils import matrix_to_rt
 from grasp_gen.models.model_utils import (
     PointNetPlusPlus,
@@ -24,7 +23,7 @@ from grasp_gen.models.model_utils import (
     load_pretrained_checkpoint_to_dict,
     offset2batch,
 )
-from grasp_gen.models.ptv3.ptv3 import PointTransformerV3
+from grasp_gen.models.ptv3.ptv3_vanilla import PointTransformerV3Vanilla
 from grasp_gen.robot import get_gripper_info
 from grasp_gen.utils.logging_config import get_logger
 from grasp_gen.models.model_utils import load_pretrained_checkpoint_to_dict
@@ -90,11 +89,7 @@ class GraspGenDiscriminator(nn.Module):
                 feature_dim=1 if self.pose_repr == "pc_feature" else -1,
             )
         elif self.obs_backbone == "ptv3":
-            self.object_encoder = PointTransformerV3(
-                in_channels=3,
-                enable_flash=False,
-                cls_mode=True,
-            )
+            self.object_encoder = PointTransformerV3Vanilla(in_channels=3)
         else:
             raise NotImplementedError()
 
@@ -311,6 +306,8 @@ class GraspGenDiscriminator(nn.Module):
 
                 mask = mask.cpu().numpy()
                 grasp_ids_topk = grasp_ids[mask]
+
+                from grasp_gen.dataset.dataset import MAPPING_ID2NAME  # training metrics only
 
                 for grasp_id, grasp_name in MAPPING_ID2NAME.items():
 
