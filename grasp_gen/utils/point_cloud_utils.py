@@ -17,7 +17,6 @@ import trimesh.transformations as tra
 from tqdm import tqdm
 
 from grasp_gen.utils.logging_config import get_logger
-from grasp_gen.dataset.renderer import depth2points
 
 logger = get_logger(__name__)
 
@@ -184,6 +183,8 @@ def depth_and_segmentation_to_point_clouds(
         )
 
     # Convert depth image to point cloud
+    from grasp_gen.dataset.renderer import depth2points  # imports pyrender
+
     pts_data = depth2points(
         depth=depth_image,
         fx=int(fx),
@@ -352,6 +353,8 @@ def depth_and_segmentation_to_point_clouds(
         )
 
     # Convert depth image to point cloud
+    from grasp_gen.dataset.renderer import depth2points  # imports pyrender
+
     pts_data = depth2points(
         depth=depth_image,
         fx=int(fx),

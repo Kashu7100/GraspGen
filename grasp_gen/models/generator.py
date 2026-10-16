@@ -15,7 +15,7 @@ import time
 import numpy as np
 import torch
 import torch.nn as nn
-from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
+from grasp_gen.models.ddpm_scheduler import DDPMScheduler
 from scipy.spatial import KDTree
 
 from grasp_gen.utils.math_utils import matrix_to_rt, rt_to_matrix
@@ -28,7 +28,7 @@ from grasp_gen.models.model_utils import (
     load_pretrained_checkpoint_to_dict,
     offset2batch,
 )
-from grasp_gen.models.ptv3.ptv3 import PointTransformerV3
+from grasp_gen.models.ptv3.ptv3_vanilla import PointTransformerV3Vanilla
 from grasp_gen.robot import get_gripper_info
 from grasp_gen.utils.logging_config import get_logger
 
@@ -139,11 +139,7 @@ class GraspGenGenerator(nn.Module):
                 feature_dim=1 if self.pose_repr == "pc_feature" else -1,
             )
         elif obs_backbone == "ptv3":
-            self.object_encoder = PointTransformerV3(
-                in_channels=3,
-                enable_flash=False,
-                cls_mode=True,
-            )
+            self.object_encoder = PointTransformerV3Vanilla(in_channels=3)
         else:
             raise NotImplementedError()
 

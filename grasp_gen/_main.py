@@ -13,9 +13,8 @@ def download_checkpoints(save_dir: Optional[str] = None):
 
     print(f"Downloading GraspGen models from {repo_id} to {local_dir}...")
     try:
-        snapshot_download(
-            repo_id=repo_id, local_dir=local_dir, local_dir_use_symlinks=False
-        )
+        # local_dir holds real files; huggingface-hub 1.0 removed local_dir_use_symlinks.
+        snapshot_download(repo_id=repo_id, local_dir=local_dir)
         print(f"Download complete!")
         print(f"\nPlease run:\nexport GRASPGEN_CHECKPOINT_DIR={local_dir}/checkpoints")
     except Exception as e:
